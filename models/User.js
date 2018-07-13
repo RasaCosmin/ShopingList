@@ -18,7 +18,7 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  firents: [
+  friends: [
     {
       user: {
         type: Schema.Types.ObjectId,

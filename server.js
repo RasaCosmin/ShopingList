@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
+const passport = require("passport");
 const users = require("./routes/api/users");
 
 const app = express();
@@ -25,7 +26,11 @@ mongoose
   .then(() => console.log("db connected"))
   .catch(err => console.log(err));
 
-app.use("/api/users", users);
+app.use(passport.initialize());
+//passport config
+require("./config/passport")(passport);
+
+app.use("/api", users);
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => console.log(`server run on port ${port}`));
