@@ -73,9 +73,23 @@ router.post("/users/login", (req, res) => {
   });
 });
 
-//@route GET /api/users/search/:search
+//@route GET /api/users/friends
+//@desc Get user friends
+//@access Private
+router.get(
+  "/firends",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    User.find({ user: req.user.id }, "firends")
+    .then(friends => {
+      console.log(friends);
+    });
+  }
+);
+
+//@route GET /api/search/:search
 //@desc Find users which contains {search} route
-//@access Public
+//@access Private
 router.get(
   "/search/:search",
   passport.authenticate("jwt", { session: false }),
