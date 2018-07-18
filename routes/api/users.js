@@ -77,12 +77,38 @@ router.post("/users/login", (req, res) => {
 //@desc Get user friends
 //@access Private
 router.get(
-  "/firends",
+  "/friends",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    User.find({ user: req.user.id }, "firends")
-    .then(friends => {
-      console.log(friends);
+    User.findById(req.user.id)
+      .populate({ path: "friends.user", select: "name" })
+      .then(user => {
+        console.log(user.friends);
+        console.log(user);
+        res.json(user.friends);
+      });
+  }
+);
+
+//@route POST /api/user/addfriend
+//desc add a new friend
+//@acccess Private
+router.post(
+  "/addfriend",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    User.findOne({ _id: req.user.id }).then(user => {
+      console.log(user);
+      if (
+        user.friends.filter(f => f.user.toString() === req.body.userid).length >
+        0
+      ) {
+        return res.status(400).json({ alreadyadded: "friend already added" });
+      }
+
+      user.friends.unshift({ user: req.body.userid });
+
+      user.save().then(user => res.json(user.friends));
     });
   }
 );
